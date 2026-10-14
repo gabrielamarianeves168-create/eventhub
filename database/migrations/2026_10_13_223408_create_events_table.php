@@ -18,7 +18,7 @@ return new class extends Migration
                 ->constrained()
                 ->restrictOnDelete();
 
-            $table->stirng('title');
+            $table->string('title');
             $table->text('description');
             $table->string('location');
             $table->dateTime('start_at');

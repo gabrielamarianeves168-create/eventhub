@@ -17,9 +17,29 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        User::updateOrCreate(
+            ['email' => 'admin@eventhub.test'],
+            [
+                 'name' => 'Administrador', 
+                'password' => Hash::make('password'), 
+                'role' => 'admin', 
+                'status' => true,
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'usuario@eventhub.test'],
+            [
+                'name' => 'Usuário Demonstração',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+                'status' => true,
+            ]
+        );
+
+        $this->call([
+            CategorySeeder::class,
+            EventSeeder::class,
         ]);
     }
 }
