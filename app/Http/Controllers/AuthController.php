@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
@@ -19,7 +25,8 @@ class AuthController extends Controller
             'status' => true,
         ];
 
-        if (Auth::attemp(
+        // Correção: de attemp para attempt
+        if (Auth::attempt(
             $credentials,
             $request->boolean('remember')
         )) {
@@ -34,40 +41,46 @@ class AuthController extends Controller
         }
 
         return back()
-            ->withErros([
+            // Correção: de withErros para withErrors
+            ->withErrors([
                 'email' => 'E-mail ou senha inválidos'
             ])
             ->onlyInput('email');
     }
 
-    public function register(RegisterRequest $request): RedirectResponse {
-
+    public function register(RegisterRequest $request): RedirectResponse 
+    {
         $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
-            'password' => Hash::make(
+            // Correção: adicionado o $ em request
+            'password' => Hash::make($request->input('password')), 
+            'role' => 'user', 
+            'status' => true,
+        ]);
 
-    request->input('password')), 'role'=>'user', 'status' => true,]);
-        Auth::login(user);
+        // Correção: adicionado o $ em user
+        Auth::login($user);
 
         $request->session()->regenerate();
 
         return redirect()
-            ->route('events.idex')
+            // Correção: de idex para index
+            ->route('events.index')
             ->with(
                 'success',
                 'Conta criada com sucesso'
             );
     }
 
-    public function logout(
-        \Illuminate\Http\Request $request
-    ): RedirectResponse {
+    public function logout(\Illuminate\Http\Request $request): RedirectResponse 
+    {
         Auth::logout();
 
         $request->session()->invalidate();
 
-        $request->session->regenerateToken();
+        // Correção: session() agora é chamado como método
+        $request->session()->regenerateToken();
 
         return redirect()
             ->route('login')
